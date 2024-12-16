@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:wes_report/services/location.dart';
 
 class LoadingScreen extends StatefulWidget {
   const LoadingScreen({super.key});
@@ -9,18 +9,15 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
-  Future<void> getLocation() async {
-    Position position = await Geolocator.getCurrentPosition(
-      locationSettings: LocationSettings(
-        accuracy: LocationAccuracy.lowest,
-        distanceFilter: 10,
-      ),
-    );
+  @override
+  void initState() {
+    super.initState();
+    getLocation();
+  }
 
-    debugPrint('Latitude: ${position.latitude}');
-    debugPrint('Longitude: ${position.longitude}');
-    debugPrint('Accuracy: ${position.accuracy}');
-    debugPrint('Timestamp: ${position.timestamp}');
+  void getLocation() async {
+    Location location = Location();
+    await location.getCurrentLocation();
   }
 
   @override
