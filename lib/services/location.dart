@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:wes_report/services/networking.dart';
 
 class Location {
   double? latitude;
@@ -11,7 +10,7 @@ class Location {
     this.longitude,
   });
 
-  Future<void> getCurrentLocationData(String apiKey) async {
+  Future<void> getCurrentLocation() async {
     try {
       Position position = await Geolocator.getCurrentPosition(
         locationSettings: LocationSettings(
@@ -22,13 +21,6 @@ class Location {
 
       latitude = position.latitude;
       longitude = position.longitude;
-
-      Networking networking = Networking(
-        url:
-            'https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&appid=$apiKey&units=metric',
-      );
-
-      var weatherData = await networking.getData();
     } catch (e) {
       debugPrint('Error: $e');
     }
