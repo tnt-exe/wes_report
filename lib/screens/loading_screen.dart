@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wes_report/common/constants.dart';
 import 'package:wes_report/services/location.dart';
 
 class LoadingScreen extends StatefulWidget {
@@ -17,7 +18,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
   void getLocation() async {
     Location location = Location();
-    await location.getCurrentLocation();
+    await location.getCurrentLocationData(apiKey);
   }
 
   @override
