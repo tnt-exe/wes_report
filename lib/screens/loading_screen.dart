@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:wes_report/common/constants.dart';
+import 'package:wes_report/screens/location_screen.dart';
 import 'package:wes_report/services/location.dart';
 import 'package:wes_report/services/networking.dart';
 
@@ -26,17 +28,24 @@ class _LoadingScreenState extends State<LoadingScreen> {
     );
 
     var weatherData = await networking.getData();
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return LocationScreen();
+        },
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            getLocation();
-          },
-          child: Text('Get Location'),
+        child: SpinKitDoubleBounce(
+          size: 100.0,
+          color: Colors.white,
         ),
       ),
     );
