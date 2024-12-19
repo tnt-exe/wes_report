@@ -13,13 +13,16 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
+  late Future<void> _locationFuture;
+  Future<dynamic> _weatherData = Future.value(null);
+
   @override
   void initState() {
     super.initState();
-    getLocation();
+    _locationFuture = getLocation();
   }
 
-  void getLocation() async {
+  Future<void> getLocation() async {
     Location location = Location();
     await location.getCurrentLocation();
     Networking networking = Networking(
@@ -27,28 +30,42 @@ class _LoadingScreenState extends State<LoadingScreen> {
           'https://api.openweathermap.org/data/2.5/weather?lat=${location.latitude}&lon=${location.longitude}&appid=$apiKey&units=metric',
     );
 
-    var weatherData = await networking.getData();
+    _weatherData = await networking.getData();
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) {
-          return LocationScreen(
-            locationWeather: weatherData,
-          );
-        },
-      ),
-    );
+    debugPrint('Weather data: $_weatherData');
+    debugPrint(_weatherData.toString());
+
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) {
+    //       return LocationScreen(
+    //         locationWeather: weatherData,
+    //       );
+    //     },
+    //   ),
+    // );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: SpinKitDoubleBounce(
-          size: 100.0,
-          color: Colors.white,
-        ),
+      body: FutureBuilder(
+        future: _locationFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return LocationScreen(
+              locationWeather: _weatherData,
+            );
+          } else {
+            return const Center(
+              child: SpinKitDoubleBounce(
+                size: 100.0,
+                color: Colors.white,
+              ),
+            );
+          }
+        },
       ),
     );
   }
