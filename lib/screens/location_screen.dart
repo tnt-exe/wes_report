@@ -11,11 +11,22 @@ class LocationScreen extends StatefulWidget {
 }
 
 class _LocationScreenState extends State<LocationScreen> {
+  double? temperature;
+  int? condition;
+  String? cityName;
+
   @override
   void initState() {
     super.initState();
+    updateUI(widget.locationWeather);
+  }
 
-    debugPrint(widget.locationWeather.toString());
+  void updateUI(dynamic weatherData) {
+    temperature = weatherData['main']['temp'];
+    condition = weatherData['weather'][0]['id'];
+    cityName = weatherData['name'];
+
+    debugPrint('Temperature: $temperature');
   }
 
   @override

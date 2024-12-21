@@ -13,8 +13,8 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
-  late Future<void> _locationFuture;
-  Future<dynamic> _weatherData = Future.value(null);
+  Future<dynamic>? _locationFuture;
+  // Future<dynamic>? _weatherData;
 
   @override
   void initState() {
@@ -22,7 +22,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
     _locationFuture = getLocation();
   }
 
-  Future<void> getLocation() async {
+  Future<dynamic> getLocation() async {
     Location location = Location();
     await location.getCurrentLocation();
     Networking networking = Networking(
@@ -30,17 +30,14 @@ class _LoadingScreenState extends State<LoadingScreen> {
           'https://api.openweathermap.org/data/2.5/weather?lat=${location.latitude}&lon=${location.longitude}&appid=$apiKey&units=metric',
     );
 
-    _weatherData = await networking.getData();
-
-    debugPrint('Weather data: $_weatherData');
-    debugPrint(_weatherData.toString());
+    return await networking.getData();
 
     // Navigator.push(
     //   context,
     //   MaterialPageRoute(
     //     builder: (context) {
     //       return LocationScreen(
-    //         locationWeather: weatherData,
+    //         locationWeather: _weatherData,
     //       );
     //     },
     //   ),
@@ -53,10 +50,14 @@ class _LoadingScreenState extends State<LoadingScreen> {
       body: FutureBuilder(
         future: _locationFuture,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return LocationScreen(
-              locationWeather: _weatherData,
-            );
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasData) {
+              return LocationScreen(locationWeather: snapshot.data);
+            } else {
+              return const Center(
+                child: Text('Error: Unable to get location data.'),
+              );
+            }
           } else {
             return const Center(
               child: SpinKitDoubleBounce(
